@@ -143,6 +143,21 @@ library(magrittr)
 
 msigdb <- msigdbr(species = "Homo sapiens")
 
+msigdb.split <- msigdb %>%
+  split(f = paste(.$gs_cat, .$gs_subcat, sep = "_")) %>%
+  set_names(sub("_$", "", names(.)))
+
+# The following splits each of the MSigDB gene set collections into list by their Entrez gene ID
+# If your gene annotation is Ensembl, you could change the x argument in split to:
+# x = collection$ensembl_gene
+# Or, if your annotation is by gene symbols:
+# x = collection$gene_symbol
+
+msigdb.lists <- lapply(msigdb.split, function(collection) split(x = collection$gene_symbol, f = collection$gs_name))
+
+isg.I <- unique(msigdb.lists$H$HALLMARK_INTERFERON_ALPHA_RESPONSE)
+isg.II <- unique(msigdb.lists$H$HALLMARK_INTERFERON_GAMMA_RESPONSE)
+
 isg.reactome <- unique(msigdb.lists$`C2_CP:REACTOME`$REACTOME_INTERFERON_SIGNALING)
 
 seurat_reactome <- AddModuleScore(seurat_object, features = list(isg.reactome), name = "Scores_Reactome_")
