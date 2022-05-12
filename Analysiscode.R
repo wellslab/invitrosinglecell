@@ -209,8 +209,17 @@ venn.plot <- draw.pairwise.venn(length(toleranceinMDM),
 
 grid.draw(venn.plot)
 
-
-
+#heatmaps
+group_cluster_table <- table(sample_labels, seurat_object$seurat_clusters)
+pheatmap::pheatmap(group_cluster_table, display_numbers = group_cluster_table,
+                   annotation_col = data.frame(Cluster = colnames(group_cluster_table), row.names = colnames(group_cluster_table)),
+                   annotation_legend = FALSE,
+                   annotation_colors = list(Cluster = setNames(c('#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+                                                                 '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3',
+                                                                 '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'),
+                                                               colnames(group_cluster_table))),
+                                          cluster_rows = FALSE,
+                            color = c("#FFFFFF", colorRampPalette(RColorBrewer::brewer.pal(5, "Reds")[-5])(99)))
 
 DoHeatmap(
   seurat_object,
