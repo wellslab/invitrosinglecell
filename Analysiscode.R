@@ -221,12 +221,15 @@ pheatmap::pheatmap(group_cluster_table, display_numbers = group_cluster_table,
                                           cluster_rows = FALSE,
                             color = c("#FFFFFF", colorRampPalette(RColorBrewer::brewer.pal(5, "Reds")[-5])(99)))
 
-DoHeatmap(
+seurat_object$clustered_groups <- factor(seurat_object$seurat_clusters, levels = levels(seurat_object$seurat_clusters)[new.order])
+
+heat <- DoHeatmap(
   seurat_object,
   features = top2$gene,
   cells = sample(rownames(seurat_object@meta.data), size = 10000, replace = FALSE),
   group.bar = TRUE,
-  group.colors =  c('#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'),
+  group.by = "clustered_groups",
+  group.colors =  c('#E6194B', '#3CB44B', '#FFE119', '#4363D8', '#F58231', '#911EB4', '#46F0F0', '#F032E6', '#BCF60C', '#FABEBE', '#008080', '#E6BEFF', '#9A6324', '#FFFAC8', '#800000', '#AAFFC3', '#808000', '#FFD8B1', '#000075', '#808080', '#FFFFFF', '#000000')[new.order],
   disp.min = -2.5,
   disp.max = NULL,
   slot = "scale.data",
