@@ -6,7 +6,6 @@ library(Matrix)
 library(ggplot2)
 library(sctransform)
 library(limma)
-library(VennDiagram)
 
 
 #load matrix files created through aggr in cell ranger without depth normalization with file output called filtered_feature_bc_matrix
