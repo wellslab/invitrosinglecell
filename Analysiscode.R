@@ -166,48 +166,6 @@ boxplot(seurat_reactome@meta.data$Scores_Reactome_1 ~ seurat_object@meta.data$gr
         main = "Reactome IFN signalling", ylab = "Module scores", xlab = "", names = levels(sample_labels),
         las = 2)
 
-#VennDiagrams
-seurat_object.PSCMacutevsunstim <- FindMarkers(seurat_object, ident.1= 1, ident.2 = 2, group.by = 'group', min.pct=0.3)
-seurat_object.PSCMrestimvsacute <- FindMarkers(seurat_object, ident.1= 2, ident.2 = 4, group.by = 'group', min.pct=0.3)
-upinPSCMacute <- rownames(seurat_object.PSCMacutevsunstim)[seurat_object.PSCMacutevsunstim$avg_log2FC < 0 & seurat_object.PSCMacutevsunstim$p_val_adj <0.05]
-downinPSCMrestim <- rownames(seurat_object.PSCMrestimvsacute)[seurat_object.PSCMrestimvsacute$avg_log2FC > 0 & seurat_object.PSCMrestimvsacute$p_val_adj <0.05]
-upinPSCMrestim <- rownames(seurat_object.PSCMrestimvsacute)[seurat_object.PSCMrestimvsacute$avg_log2FC < 0 & seurat_object.PSCMrestimvsacute$p_val_adj <0.05]
-toleranceinPSCM <-intersect(upinPSCMacute, downinPSCMrestim)
-traininginPSCM <- intersect(upinPSCMacute, upinPSCMrestim)
-
-seurat_object.MDMacutevsunstim <- FindMarkers(seurat_object, ident.1= 5, ident.2 = 6, group.by = 'group', min.pct=0.3)
-seurat_object.MDMrestimvsacute <- FindMarkers(seurat_object, ident.1= 6, ident.2 = 8, group.by = 'group', min.pct=0.3)
-upinMDMacute <- rownames(seurat_object.MDMacutevsunstim)[seurat_object.MDMacutevsunstim$avg_log2FC < 0 & seurat_object.MDMacutevsunstim$p_val_adj <0.05]
-downinMDMrestim <- rownames(seurat_object.MDMrestimvsacute)[seurat_object.MDMrestimvsacute$avg_log2FC > 0 & seurat_object.MDMrestimvsacute$p_val_adj <0.05]
-upinMDMrestim <- rownames(seurat_object.MDMrestimvsacute)[seurat_object.MDMrestimvsacute$avg_log2FC < 0 & seurat_object.MDMrestimvsacute$p_val_adj <0.05]
-toleranceinMDM <-intersect(upinMDMacute, downinMDMrestim)
-traininginMDM <- intersect(upinMDMacute, upinMDMrestim)
-sharedgenesintol <- intersect(toleranceinMDM, toleranceinPSCM)
-sharedgenesinacute <- intersect(upinMDMacute, upinPSCMacute)
-sharedgenesintraining <- intersect(traininginMDM, traininginPSCM)
-
-
-intersect(toleranceinMDM, toleranceinPSCM)
-
-
-venn.plot <- draw.pairwise.venn(length(traininginMDM),
-                                length(traininginPSCM),
-                                # Calculate the intersection of the two sets
-                                length( intersect(traininginMDM, traininginPSCM) ),
-                                category = c("MDM", "PSCM"), scaled = F,
-                                fill = c("light blue", "pink"), alpha = rep(0.5, 2), cex = 2.5,
-                                cat.pos = c(0, 0))
-
-venn.plot <- draw.pairwise.venn(length(toleranceinMDM),
-                                length(toleranceinPSCM),
-                                # Calculate the intersection of the two sets
-                                length( intersect(toleranceinMDM, toleranceinPSCM) ),
-                                category = c("MDM", "PSCM"), scaled = F,
-                                fill = c("light blue", "pink"), alpha = rep(0.5, 2), cex = 2.5,
-                                cat.pos = c(0, 0))
-
-
-grid.draw(venn.plot)
 
 #heatmaps
 group_cluster_table <- table(sample_labels, seurat_object$seurat_clusters)
@@ -245,6 +203,9 @@ heat <- DoHeatmap(
   combine = TRUE
 )+ scale_fill_gradientn(colors = c("blue", "white", "red"))
 
+ #Average Expression of components of TLR pathway
+gene_list_TLR4_Dep_Indp <- c("TRAM1", "TICAM1","TRAF3" etc.)
+gene_avg_expression <- AverageExpression(seurat_object, slot= "data", features = gene_list_TLR4_Dep_Indp, group.by = "seurat_clusters")
 
 
 #aggregation based on cluster name
